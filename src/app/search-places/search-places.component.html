@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="search-container mb-3">
+      <h5>Business Types:</h5>
+      <div *ngFor="let type of businessTypes">
+        <input type="checkbox" [value]="type.value" (change)="onTypeChange($event, type.value)">
+        <label>{{ type.name }}</label>
+      </div>
+  
+      <button type="button" class="btn btn-primary" (click)="search()">Search</button>
+    </div>
+  
+    <div *ngIf="noResultsFound" class="alert alert-warning" role="alert">
+      No results found for "{{ error_search }}". Please try a different search.
+    </div>
+  
+    <div *ngFor="let searchResult of searchResults; let searchIndex = index">
+      <h3>{{ searchResult.query }}</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="table-column-margin">Name</th>
+            <th>Phone</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let place of searchResult.places; let placeIndex = index">
+            <td class="table-column-margin">{{ place.name }}</td>
+            <td>{{ place.phone }}</td>
+            <td>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" (change)="removePlace(searchIndex, placeIndex)">
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <hr *ngIf="searchIndex < searchResults.length - 1">
+    </div>
+  </div>
+  
