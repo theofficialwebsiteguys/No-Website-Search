@@ -30,9 +30,19 @@ export class SearchPlacesComponent implements OnInit, AfterViewInit {
 
   businessTypes = [
     { name: 'Restaurant', value: 'restaurant' },
-    { name: 'Cafe', value: 'cafe' },
-    { name: 'Bar', value: 'bar' },
-    { name: 'Store', value: 'store' }
+    { name: 'Dentist', value: 'dentist' },
+    { name: 'Accountant', value: 'accountant' },
+    { name: 'Doctor', value: 'doctor' },
+    { name: 'Lawyer', value: 'lawyer' },
+    { name: 'Hardscaping', value: 'hardscaping' },
+    { name: 'Masonry', value: 'masonry' },
+    { name: 'Roofers', value: 'roofers' },
+    { name: 'Electricians', value: 'electricians' },
+    { name: 'Plumbers', value: 'plumbers' },
+    { name: 'Petsitters', value: 'petsitters' },
+    { name: 'Country Club', value: 'country_club' },
+    { name: 'Construction', value: 'construction' },
+    { name: 'Tattoo Shop', value: 'tattoo_shop' }
   ];
 
   constructor(private googleMapsService: GoogleMapsService) {}

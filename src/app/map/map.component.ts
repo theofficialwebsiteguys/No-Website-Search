@@ -24,7 +24,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   map!: google.maps.Map;
   circle!: google.maps.Circle;
   radius: number = 2000; // Default radius in meters
-  center: { lat: number, lng: number } = { lat: 42.408513412792566, lng:  -71.05311593977181 }; // Default center
+  center: { lat: number, lng: number } = { lat: 42.408513412792566, lng: -71.05311593977181 }; // Default center
   types: string[] = []; // Selected types
   mapInitializedFlag: boolean = false;
   query: string = ''; // Placeholder for query
@@ -35,9 +35,19 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   businessTypes = [
     { name: 'Restaurant', value: 'restaurant' },
-    { name: 'Cafe', value: 'cafe' },
-    { name: 'Bar', value: 'bar' },
-    { name: 'Store', value: 'store' }
+    { name: 'Dentist', value: 'dentist' },
+    { name: 'Accountant', value: 'accountant' },
+    { name: 'Doctor', value: 'doctor' },
+    { name: 'Lawyer', value: 'lawyer' },
+    { name: 'Hardscaping', value: 'hardscaping' },
+    { name: 'Masonry', value: 'masonry' },
+    { name: 'Roofers', value: 'roofers' },
+    { name: 'Electricians', value: 'electricians' },
+    { name: 'Plumbers', value: 'plumbers' },
+    { name: 'Petsitters', value: 'petsitters' },
+    { name: 'Country Club', value: 'country_club' },
+    { name: 'Construction', value: 'construction' },
+    { name: 'Tattoo Shop', value: 'tattoo_shop' }
   ];
 
   constructor(private googleMapsService: GoogleMapsService) {}
@@ -172,3 +182,4 @@ export class MapComponent implements OnInit, AfterViewInit {
     return this.circle ? this.circle.getRadius() : 0;
   }
 }
+
