@@ -181,5 +181,11 @@ export class MapComponent implements OnInit, AfterViewInit {
   getCircleRadius(): number {
     return this.circle ? this.circle.getRadius() : 0;
   }
+
+  clearResults(): void {
+    this.searchResults = [];
+    this.noResultsFound = false;
+  }
+  
 }
 

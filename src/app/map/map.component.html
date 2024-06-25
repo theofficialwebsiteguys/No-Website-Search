@@ -9,6 +9,7 @@
     </div>
 
     <button type="button" class="btn btn-primary" (click)="search()">Search</button>
+    <button type="button" class="btn btn-secondary" (click)="clearResults()">Clear Results</button> <!-- Add this line -->
   </div>
 
   <div *ngIf="noResultsFound" class="alert alert-warning" role="alert">
