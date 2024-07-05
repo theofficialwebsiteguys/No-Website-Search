@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, EventEmitter, Output } from '@angular/core';
 import { GoogleMapsService } from '../google-maps.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, from, Observable } from 'rxjs';
+import { map, mergeMap, toArray } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -25,30 +26,13 @@ export class MapComponent implements OnInit, AfterViewInit {
   circle!: google.maps.Circle;
   radius: number = 2000; // Default radius in meters
   center: { lat: number, lng: number } = { lat: 42.408513412792566, lng: -71.05311593977181 }; // Default center
-  types: string[] = []; // Selected types
+  types: string[] = ['restaurant']; // Predefined business types
   mapInitializedFlag: boolean = false;
   query: string = ''; // Placeholder for query
 
-  searchResults: SearchResult[] = [];
+  searchResults: any[] = [];
   noResultsFound: boolean = false;
   error_search: string = '';
-
-  businessTypes = [
-    { name: 'Restaurant', value: 'restaurant' },
-    { name: 'Dentist', value: 'dentist' },
-    { name: 'Accountant', value: 'accountant' },
-    { name: 'Doctor', value: 'doctor' },
-    { name: 'Lawyer', value: 'lawyer' },
-    { name: 'Hardscaping', value: 'hardscaping' },
-    { name: 'Masonry', value: 'masonry' },
-    { name: 'Roofers', value: 'roofers' },
-    { name: 'Electricians', value: 'electricians' },
-    { name: 'Plumbers', value: 'plumbers' },
-    { name: 'Petsitters', value: 'petsitters' },
-    { name: 'Country Club', value: 'country_club' },
-    { name: 'Construction', value: 'construction' },
-    { name: 'Tattoo Shop', value: 'tattoo_shop' }
-  ];
 
   constructor(private googleMapsService: GoogleMapsService) {}
 
@@ -56,6 +40,7 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.loadMap();
+    this.setCurrentLocation();
   }
 
   loadMap(): void {
@@ -99,6 +84,27 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
   }
 
+  setCurrentLocation(): void {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.center = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          this.map.setCenter(this.center);
+          this.circle.setCenter(this.center);
+          this.centerChanged.emit(this.center);
+        },
+        (error) => {
+          console.error('Error getting current location', error);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+  }
+
   onRadiusChanged(newRadius: number): void {
     this.radius = newRadius;
   }
@@ -106,6 +112,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   onCenterChanged(newCenter: { lat: number, lng: number }): void {
     this.center = newCenter;
   }
+
 
   search(): void {
     if (!this.mapInitializedFlag) {
@@ -120,52 +127,41 @@ export class MapComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.googleMapsService.searchPlaces(center.lat(), center.lng(), radius, this.types).subscribe(initialPlaces => {
-      this.noResultsFound = false;
-      if (initialPlaces.length === 0) {
-        this.noResultsFound = true;
-        this.error_search = this.query;
-        return;
-      }
+    const searchObservables: Observable<any>[] = this.types.map(type =>
+      this.googleMapsService.searchPlaces(center.lat(), center.lng(), radius, [type])
+    );
 
-      const detailObservables = initialPlaces.map(place =>
-        this.googleMapsService.getPlaceDetails(place.place_id)
-      );
-
-      forkJoin(detailObservables).subscribe(details => {
-        // Filter out places without a website
-        const placesWithDetails = details.filter(detail => !detail.website).map(detail => ({
-          name: detail.name,
-          place_id: detail.place_id,
-          phone: detail.formatted_phone_number
-        }));
-
-        if (placesWithDetails.length > 0) {
-          this.searchResults.push({ query: this.query, places: placesWithDetails });
-        } else {
-          this.error_search = this.query;
-          this.noResultsFound = true;
+    from(searchObservables)
+      .pipe(
+        mergeMap(obs => obs),
+        mergeMap((initialPlaces: any[]) =>
+          forkJoin(initialPlaces.map(place => this.googleMapsService.getPlaceDetails(place.place_id)))
+        ),
+        map(details =>
+          details.filter(detail => !detail.website).map(detail => ({
+            name: detail.name,
+            place_id: detail.place_id,
+            phone: detail.formatted_phone_number
+          }))
+        ),
+        toArray()
+      )
+      .subscribe(
+        results => {
+          this.searchResults = results.flat();
+          if (this.searchResults.length === 0) {
+            this.noResultsFound = true;
+            this.error_search = this.query;
+          }
+        },
+        error => {
+          console.error('Error during search:', error);
         }
-      });
-    });
+      );
   }
 
-  onTypeChange(event: any, type: string): void {
-    if (event.target.checked) {
-      this.types.push(type);
-    } else {
-      const index = this.types.indexOf(type);
-      if (index > -1) {
-        this.types.splice(index, 1);
-      }
-    }
-  }
-
-  removePlace(searchIndex: number, placeIndex: number): void {
-    this.searchResults[searchIndex].places.splice(placeIndex, 1);
-    if (this.searchResults[searchIndex].places.length === 0) {
-      this.searchResults.splice(searchIndex, 1);
-    }
+  removePlace(placeIndex: number): void {
+    this.searchResults.splice(placeIndex, 1);
   }
 
   updateCircle(): void {
@@ -186,6 +182,4 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.searchResults = [];
     this.noResultsFound = false;
   }
-  
 }
-
