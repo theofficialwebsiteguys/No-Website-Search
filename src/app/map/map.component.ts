@@ -33,6 +33,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   searchResults: any[] = [];
   noResultsFound: boolean = false;
   error_search: string = '';
+  emailMode: boolean = false; // Toggle for email mode
 
   constructor(private googleMapsService: GoogleMapsService) {}
 
@@ -113,6 +114,14 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.center = newCenter;
   }
 
+  toggleSearchMode(): void {
+    this.emailMode = !this.emailMode;
+    if (this.emailMode) {
+      this.types = ['doctor', 'dentist', 'lawyer', 'real_estate_agency'];
+    } else {
+      this.types = ['restaurant'];
+    }
+  }
 
   search(): void {
     if (!this.mapInitializedFlag) {
