@@ -24,7 +24,6 @@
         <tr>
           <th>Name</th>
           <th>Phone</th>
-          <th>Remove</th>
         </tr>
       </thead>
       <tbody>
@@ -32,11 +31,10 @@
           <td>{{ place.name }}</td>
           <td>{{ place.phone }}</td>
           <td>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" (change)="removePlace(placeIndex)">
-            </div>
+            <button type="button" class="btn btn-primary" (click)="selectBusiness(place)">Select</button>
           </td>
         </tr>
+        
       </tbody>
     </table>
   </div>

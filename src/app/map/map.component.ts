@@ -4,6 +4,7 @@ import { forkJoin, from, Observable } from 'rxjs';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 export interface SearchResult {
   query: string;
@@ -24,7 +25,7 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   map!: google.maps.Map;
   circle!: google.maps.Circle;
-  radius: number = 2000; // Default radius in meters
+  radius: number = 3000; // Default radius in meters
   center: { lat: number, lng: number } = { lat: 42.408513412792566, lng: -71.05311593977181 }; // Default center
   types: string[] = ['restaurant']; // Predefined business types
   mapInitializedFlag: boolean = false;
@@ -35,7 +36,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   error_search: string = '';
   emailMode: boolean = false; // Toggle for email mode
 
-  constructor(private googleMapsService: GoogleMapsService) {}
+  constructor(private googleMapsService: GoogleMapsService, private router: Router) {}
 
   ngOnInit(): void {}
 
@@ -128,31 +129,40 @@ export class MapComponent implements OnInit, AfterViewInit {
       console.error('Map component is not fully initialized.');
       return;
     }
-
+  
     const center = this.getCircleCenter();
     const radius = this.getCircleRadius();
     if (!center) {
       console.error('Circle center is not defined.');
       return;
     }
-
+  
     const searchObservables: Observable<any>[] = this.types.map(type =>
       this.googleMapsService.searchPlaces(center.lat(), center.lng(), radius, [type])
     );
-
+  
     from(searchObservables)
       .pipe(
         mergeMap(obs => obs),
         mergeMap((initialPlaces: any[]) =>
-          forkJoin(initialPlaces.map(place => this.googleMapsService.getPlaceDetails(place.place_id)))
+          // Filter places with business_status as OPERATIONAL
+          forkJoin(
+            initialPlaces
+              .filter(place => place.business_status === 'OPERATIONAL')
+              .map(place => {
+                return this.googleMapsService.getPlaceDetails(place.place_id).pipe(
+                  map(details => ({
+                    name: details.name,
+                    phone: details.formatted_phone_number,
+                    address: place.vicinity, // Feed forward the vicinity as address
+                    website: details.website // Include website for filtering
+                  }))
+                );
+              })
+          )
         ),
-        map(details =>
-          details.filter(detail => !detail.website).map(detail => ({
-            name: detail.name,
-            place_id: detail.place_id,
-            phone: detail.formatted_phone_number
-          }))
-        ),
+        // Filter out businesses that have a website
+        map(details => details.filter(detail => !detail.website)),
         toArray()
       )
       .subscribe(
@@ -168,6 +178,53 @@ export class MapComponent implements OnInit, AfterViewInit {
         }
       );
   }
+  
+
+  // search(): void {
+  //   if (!this.mapInitializedFlag) {
+  //     console.error('Map component is not fully initialized.');
+  //     return;
+  //   }
+
+  //   const center = this.getCircleCenter();
+  //   const radius = this.getCircleRadius();
+  //   if (!center) {
+  //     console.error('Circle center is not defined.');
+  //     return;
+  //   }
+
+  //   const searchObservables: Observable<any>[] = this.types.map(type =>
+  //     this.googleMapsService.searchPlaces(center.lat(), center.lng(), radius, [type])
+  //   );
+
+  //   from(searchObservables)
+  //     .pipe(
+  //       mergeMap(obs => obs),
+  //       mergeMap((initialPlaces: any[]) =>
+  //         forkJoin(initialPlaces.map(place => this.googleMapsService.getPlaceDetails(place.place_id)))
+  //       ),
+  //       map(details =>
+  //         details.filter(detail => !detail.website).map(detail => ({
+  //           name: detail.name,
+  //           place_id: detail.place_id,
+  //           phone: detail.formatted_phone_number
+  //         }))
+  //       ),
+  //       toArray()
+  //     )
+  //     .subscribe(
+  //       results => {
+  //         this.searchResults = results.flat();
+  //         if (this.searchResults.length === 0) {
+  //           this.noResultsFound = true;
+  //           this.error_search = this.query;
+  //         }
+  //       },
+  //       error => {
+  //         console.error('Error during search:', error);
+  //       }
+  //     );
+  // }
 
   removePlace(placeIndex: number): void {
     this.searchResults.splice(placeIndex, 1);
@@ -190,5 +247,10 @@ export class MapComponent implements OnInit, AfterViewInit {
   clearResults(): void {
     this.searchResults = [];
     this.noResultsFound = false;
+  }
+
+  selectBusiness(place: any): void {
+    console.log(place)
+    this.router.navigate(['/business-details'], { state: { business: place } });
   }
 }

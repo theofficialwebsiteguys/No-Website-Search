@@ -1,0 +1,122 @@
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" #navbar >
+    <div class="container-fluid">
+      <button class="navbar-toggler order-1 mt-4" type="button" (click)="toggleMobileMenu()">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <div class="collapse navbar-collapse justify-content-end order-1" id="navbarScrollLeft">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item" (click)="closeMenu()">
+            <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
+          </li>
+          <li class="nav-item" (click)="closeMenu()">
+            <a class="nav-link" routerLink="/shop" routerLinkActive="active">Gallery</a>
+          </li>
+        </ul>
+      </div>
+  
+      <a class="navbar-brand mx-auto order-2" routerLink="/home">
+        <img [src]="business.logo" id="logo" alt="Logo" height="150" width="150" />
+      </a>
+  
+      <div class="collapse navbar-collapse justify-content-start order-3 rs" id="navbarScrollRight">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item" (click)="closeMenu()">
+            <a class="nav-link" routerLink="/games" routerLinkActive="active">Menu</a>
+          </li>
+          <li class="nav-item" (click)="closeMenu()">
+            <a class="nav-link" routerLink="/blog" routerLinkActive="active">Catering</a>
+          </li>
+        </ul>
+      </div>
+  
+      <!-- <div class="slide-in-menu" [class.active]="mobileMenuActive">
+        <div class="slide-in-menu-content">
+          <button class="close-button" (click)="closeMenu()">×</button>
+          <ul class="navbar-nav mb-2 mb-lg-0">
+            <li class="nav-item" (click)="closeMenu()">
+              <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
+            </li>
+            <li class="nav-item" (click)="closeMenu()">
+              <a class="nav-link" routerLink="/shop" routerLinkActive="active">Gallery</a>
+            </li>
+            <li class="nav-item" (click)="closeMenu()">
+              <a class="nav-link" routerLink="/contact" routerLinkActive="active">Menu</a>
+            </li>
+            <li class="nav-item" (click)="closeMenu()">
+              <a class="nav-link" routerLink="/contact" routerLinkActive="active">Catering</a>
+            </li>
+          </ul>
+  
+          <div class="container slide-footer text-center">
+            <img [src]="business.logo" id="logo" height="100" alt="Logo" />
+            <p class="text-dark mt-3">{{ business.address }}</p>
+            <section class="m-4">
+              <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="" role="button" data-mdb-ripple-color="dark"><i class="fab fa-facebook"></i></a>
+            </section>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </nav>
+  
+  <div class="hero" [style.background-image]="'url(' + business.hero_image + ')'">
+    <div class="hero-content text-center text-white">
+      <h1>{{ business.hero_title }}</h1>
+    </div>
+  </div>
+  
+  <div class="banner" [ngStyle]="{'background-color': business.colors.secondary}">
+    <div class="banner-sections">
+      <div class="banner-section"></div>
+      <div class="banner-section">
+        <p>Mon - Sat: 11am - 10pm</p>
+        <p>Sunday: 11am - 9pm</p>
+      </div>
+      <div class="banner-section">
+        <p>{{ business.address }}</p>
+        <p>{{ business.phone }}</p>
+      </div>
+      <div class="banner-section"></div>
+    </div>
+  </div>
+  
+  <div class="gallery">
+    <img *ngFor="let photo of business.photos" [src]="photo" alt="Gallery Image">
+  </div>
+  
+  <div class="banner2" [ngStyle]="{'background-color': business.colors.primary}">
+    <div class="banner-sections2">
+      <h2 class="banner-title">Come Eat Today!</h2>
+    </div>
+  </div>
+  
+  <div class="reviews-section" [ngStyle]="{'background-image': 'url(' + business.hero_image + ')'}">
+    <h2 class="reviews-title">See What Our Customers Have To Say!</h2>
+    <div class="review" *ngFor="let review of business.reviews">
+      <h3 class="review-author">{{ review.author }} <span class="stars">{{ review.rating }}</span></h3>
+      <p class="review-text">{{ review.text }}</p>
+    </div>
+  </div>
+  
+  <div class="footer-container">
+    <div class="footer-content">
+      <div class="map-container">
+        <iframe width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen
+          [src]="safeMapUrl">
+        </iframe>
+      </div>
+      <div class="restaurant-info text-center" [ngStyle]="{'background-color': business.colors.secondary}">
+        <h2>{{ business.name }}</h2>
+        <p>Address: {{ business.address }}</p>
+        <p>Phone: {{ business.phone }}</p>
+        <h4>Hours:</h4>
+        <p>Mon - Sat: 11am - 10pm</p>
+        <p>Sunday: 11am - 9pm</p>
+      </div>
+    </div>
+    <div class="footer-details">
+      <p>©2024 by {{ business.name }}</p>
+    </div>
+  </div>
+  

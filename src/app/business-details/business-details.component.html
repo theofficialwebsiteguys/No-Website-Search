@@ -1,0 +1,42 @@
+<div class="container mt-4">
+  <h2>Business Details</h2>
+  <form (ngSubmit)="submitDetails()">
+    <div class="mb-3">
+      <label for="businessName" class="form-label">Business Name</label>
+      <input type="text" class="form-control" id="businessName" [(ngModel)]="business.name" name="businessName">
+    </div>
+    <div class="mb-3">
+      <label for="businessPhone" class="form-label">Phone Number</label>
+      <input type="text" class="form-control" id="businessPhone" [(ngModel)]="business.phone" name="businessPhone">
+    </div>
+    <div class="mb-3">
+      <label for="businessAddress" class="form-label">Address</label>
+      <input type="text" class="form-control" id="businessAddress" [(ngModel)]="business.address" name="businessAddress">
+    </div>
+    <div class="mb-3">
+      <label for="logo" class="form-label">Logo</label>
+      <input type="file" class="form-control" id="logo" (change)="onLogoSelected($event)" name="logo">
+    </div>
+    <div class="mb-3">
+      <label for="hero" class="form-label">Hero Image (Landscape)</label>
+      <input type="file" class="form-control" id="hero" (change)="onHeroSelected($event)" name="hero">
+    </div>
+    <div class="mb-3">
+      <label for="heroTitle" class="form-label">Hero Title</label>
+      <input type="text" class="form-control" id="heroTitle" [(ngModel)]="business.hero_title" name="heroTitle">
+    </div>
+    <div class="mb-3">
+      <label for="photos" class="form-label">Photos (Up to 8)</label>
+      <input type="file" class="form-control" id="photos" (change)="onPhotosSelected($event)" name="photos" multiple>
+    </div>
+    <div class="mb-3">
+      <label for="primaryColor" class="form-label">Primary Color</label>
+      <input type="color" class="form-control" id="primaryColor" [(ngModel)]="business.colors.primary" name="primaryColor">
+    </div>
+    <div class="mb-3">
+      <label for="secondaryColor" class="form-label">Secondary Color</label>
+      <input type="color" class="form-control" id="secondaryColor" [(ngModel)]="business.colors.secondary" name="secondaryColor">
+    </div>
+    <button type="submit" class="btn btn-primary">Generate Template</button>
+  </form>
+</div>
