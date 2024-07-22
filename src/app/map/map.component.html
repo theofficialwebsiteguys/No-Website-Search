@@ -24,17 +24,24 @@
         <tr>
           <th>Name</th>
           <th>Phone</th>
+          <th>Website</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let place of searchResults; let placeIndex = index">
-          <td>{{ place.name }}</td>
-          <td>{{ place.phone }}</td>
-          <td>
-            <button type="button" class="btn btn-primary" (click)="selectBusiness(place)">Select</button>
+          <td [ngClass]="{'no-website': !place.hasWebsite}">{{ place.name }}</td>
+          <td [ngClass]="{'no-website': !place.hasWebsite}">{{ place.phone }}</td>
+          <td [ngClass]="{'no-website': !place.hasWebsite}">
+            <span *ngIf="place.hasWebsite; else noWebsiteLabel">Has Website</span>
+            <ng-template #noWebsiteLabel>No Website</ng-template>
           </td>
+          <td [ngClass]="{'no-website': !place.hasWebsite}">
+            <button type="button" class="btn btn-info" (click)="searchOnGoogle(place.name)">Search</button>
+            <button type="button" class="btn btn-primary" (click)="selectBusiness(place)">Website Generator</button>
+          </td>
+          
         </tr>
-        
       </tbody>
     </table>
   </div>

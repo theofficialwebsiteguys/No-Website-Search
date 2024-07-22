@@ -26,7 +26,25 @@ export class BusinessProfileComponent {
     logo: '',
     hero_image: '',
     hero_title: '',
+    banner: '',
     photos: [],
+    reviews: [
+      {
+        author: '',
+        rating: '',
+        text: ''
+      },
+      {
+        author: '',
+        rating: '',
+        text: ''
+      },
+      {
+        author: '',
+        rating: '',
+        text: ''
+      },
+    ],
     colors: {
       primary: '#000000', // default color
       secondary: '#ffffff' // default color
@@ -183,4 +201,5 @@ export class BusinessProfileComponent {
       this.renderer.removeClass(this.navbar.nativeElement, 'scrolled');
     }
   }
+  
 }

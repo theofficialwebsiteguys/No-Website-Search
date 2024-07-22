@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './business-details.component.html',
-  styleUrl: './business-details.component.scss'
+  styleUrls: ['./business-details.component.scss']
 })
 export class BusinessDetailsComponent implements OnInit {
   business: any = {
@@ -18,23 +18,36 @@ export class BusinessDetailsComponent implements OnInit {
     logo: '',
     hero_image: '',
     hero_title: '',
+    banner: '',
     photos: [],
     colors: {
       primary: '#000000', // default color
       secondary: '#ffffff' // default color
     }
   };
+  currentStep = 1;
+  searchResults: any[] = [];
 
   constructor(private router: Router) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state?.['business']) {
       this.business = navigation.extras.state['business'];
+      this.searchResults = navigation.extras.state['searchResults'] || [];
       // Ensure colors are initialized if not present
       this.business.colors = this.business.colors || { primary: '#000000', secondary: '#ffffff' };
     }
+
+    // Initialize currentStep based on pre-filled data
+    this.initializeStep();
   }
 
   ngOnInit(): void {}
+
+  initializeStep(): void {
+    if (this.business.name) this.currentStep = 2;
+    if (this.business.phone) this.currentStep = 3;
+    if (this.business.address) this.currentStep = 4;
+  }
 
   onLogoSelected(event: any): void {
     const file = event.target.files[0];
@@ -42,6 +55,7 @@ export class BusinessDetailsComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.business.logo = e.target.result; // This will be a base64 string
+        this.nextStep(5);
       };
       reader.readAsDataURL(file);
     }
@@ -53,6 +67,7 @@ export class BusinessDetailsComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.business.hero_image = e.target.result; // This will be a base64 string
+        this.nextStep(6);
       };
       reader.readAsDataURL(file);
     }
@@ -68,9 +83,23 @@ export class BusinessDetailsComponent implements OnInit {
       };
       reader.readAsDataURL(files[i]);
     }
+    this.nextStep(9);
+  }
+
+  nextStep(step: number): void {
+    this.currentStep = step;
+  }
+
+  previousStep(): void {
+    this.currentStep = this.currentStep > 1 ? this.currentStep - 1 : 1;
   }
 
   submitDetails(): void {
     this.router.navigate(['/business-profile'], { state: { business: this.business } });
+  }
+  
+
+  goBack(): void {
+    this.router.navigate(['/'], { state: { searchResults: this.searchResults } });
   }
 }
