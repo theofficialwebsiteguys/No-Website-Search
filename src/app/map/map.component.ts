@@ -5,6 +5,7 @@ import { map, mergeMap, toArray } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router, NavigationExtras } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 export interface SearchResult {
   query: string;
@@ -16,7 +17,7 @@ export interface SearchResult {
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
   standalone: true,
-  imports: [CommonModule, HttpClientModule]
+  imports: [CommonModule, HttpClientModule, FormsModule]
 })
 export class MapComponent implements OnInit, AfterViewInit {
   @Output() radiusChanged = new EventEmitter<number>();
@@ -70,19 +71,6 @@ export class MapComponent implements OnInit, AfterViewInit {
       center: this.center,
       editable: true,
       draggable: true
-    });
-
-    this.circle.addListener('radius_changed', () => {
-      this.radius = this.circle.getRadius();
-      this.radiusChanged.emit(this.radius);
-    });
-
-    this.circle.addListener('center_changed', () => {
-      const center = this.circle.getCenter();
-      if (center) {
-        this.map.setCenter(center);
-        this.centerChanged.emit({ lat: center.lat(), lng: center.lng() });
-      }
     });
 
     google.maps.event.addListenerOnce(this.map, 'idle', () => {
@@ -191,7 +179,11 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   updateCircle(): void {
     if (this.circle) {
-      this.circle.setRadius(Number(this.radius));
+      this.circle.setRadius(this.radius);
+      this.circle.setCenter(this.center);
+      this.map.setCenter(this.center);
+      this.radiusChanged.emit(this.radius);
+      this.centerChanged.emit(this.center);
     }
   }
 

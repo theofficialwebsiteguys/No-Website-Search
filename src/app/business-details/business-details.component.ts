@@ -97,7 +97,6 @@ export class BusinessDetailsComponent implements OnInit {
   submitDetails(): void {
     this.router.navigate(['/business-profile'], { state: { business: this.business } });
   }
-  
 
   goBack(): void {
     this.router.navigate(['/'], { state: { searchResults: this.searchResults } });

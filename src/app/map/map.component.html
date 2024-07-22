@@ -40,9 +40,19 @@
             <button type="button" class="btn btn-info" (click)="searchOnGoogle(place.name)">Search</button>
             <button type="button" class="btn btn-primary" (click)="selectBusiness(place)">Website Generator</button>
           </td>
-          
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="controls">
+    <label for="radiusRange">Radius: {{ radius }} meters</label>
+    <input type="range" id="radiusRange" min="500" max="10000" step="500" [(ngModel)]="radius" (input)="updateCircle()">
+    
+    <label for="latitudeInput">Latitude:</label>
+    <input type="number" id="latitudeInput" [(ngModel)]="center.lat" (input)="updateCircle()">
+    
+    <label for="longitudeInput">Longitude:</label>
+    <input type="number" id="longitudeInput" [(ngModel)]="center.lng" (input)="updateCircle()">
   </div>
 </div>
