@@ -6,8 +6,8 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class GoogleMapsService {
-  private serverUrl = 'https://no-website-search-1a6ef1d846b8.herokuapp.com'; // Update with your server's URL
-  //private serverUrl = 'http://localhost:3000'
+  //private serverUrl = 'https://no-website-search-1a6ef1d846b8.herokuapp.com'; // Update with your server's URL
+  private serverUrl = 'http://localhost:3000'
 
   constructor(private http: HttpClient) { }
 
