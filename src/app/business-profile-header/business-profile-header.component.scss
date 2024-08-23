@@ -1,12 +1,13 @@
-.hero, .review-sections {
+.hero {
     position: relative;
     height: 80vh;
     background-size: cover;
-    background-position: center 0;
+    background-position: center center;
     background-repeat: no-repeat;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-attachment: fixed; /* Parallax Effect */
   }
 
   .nav-link{
@@ -101,3 +102,11 @@
     }
 }
 
+@media only screen and (max-width: 768px) {
+    .hero {
+      background-size: cover; /* Ensures the background image covers the container */
+      background-position: center center; /* Centers the image */
+      background-attachment: scroll; /* Avoids the parallax effect on mobile */
+    }
+  
+  }
