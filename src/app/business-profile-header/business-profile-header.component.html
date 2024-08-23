@@ -1,0 +1,22 @@
+<div class="socialBar">
+    <div class="instagram-facebook">
+      <i class="fa-brands fa-facebook"></i>
+      <i class="fa-brands fa-instagram"></i>
+    </div>
+    <div class="email">
+        <a class="emailLink" href="mailto:keepeatingcake@gmail.com">
+            <i class="bi bi-envelope social-logos"></i>
+            <p id="email">{{business.phone}}</p>
+        </a>
+        <p class="split" style="color: white; height: 50%;">|</p>
+    </div>
+  
+  </div>
+    
+  <div class="hero" [style.background-image]="'url(' + business.hero_image + ')'">
+    <div class="hero-content text-center text-white">
+      <img src="{{ business.logo }}" alt="Business Logo" class="hero-logo" height="150" width="150">
+      <h1>{{ business.hero_title }}</h1>
+      <p>A small blurb about your business</p>
+    </div>
+  </div>

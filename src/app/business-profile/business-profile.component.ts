@@ -3,6 +3,8 @@ import { Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angu
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { BusinessProfileHeaderComponent } from '../business-profile-header/business-profile-header.component';
+import { BusinessProfileReviewsComponent } from '../business-profile-reviews/business-profile-reviews.component';
 
 interface DropdownMenu {
   id: string;
@@ -14,7 +16,7 @@ interface DropdownMenu {
 @Component({
   selector: 'app-business-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BusinessProfileHeaderComponent, BusinessProfileReviewsComponent],
   templateUrl: './business-profile.component.html',
   styleUrl: './business-profile.component.scss'
 })

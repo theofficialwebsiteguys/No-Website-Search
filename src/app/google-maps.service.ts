@@ -6,7 +6,8 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class GoogleMapsService {
-  private serverUrl = 'https://no-website-search-1a6ef1d846b8.herokuapp.com'; // Update with your server's URL
+  //private serverUrl = 'https://no-website-search-1a6ef1d846b8.herokuapp.com'; // Update with your server's URL
+  private serverUrl = 'http://localhost:3000'
 
   constructor(private http: HttpClient) { }
 
@@ -22,6 +23,13 @@ export class GoogleMapsService {
     const url = `${this.serverUrl}/place-details?placeId=${placeId}`;
     return this.http.get<any>(url).pipe(
       map(response => response)
+    );
+  }
+
+  searchPhotos(businessName: string): Observable<any[]> {
+    const url = `${this.serverUrl}/search-photos?businessName=${businessName}`;
+    return this.http.get<any>(url).pipe(
+      map(response => response.photos || [])
     );
   }
 }

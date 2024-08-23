@@ -35,6 +35,14 @@
     <div *ngIf="currentStep >= 8" class="mb-3">
       <label for="photos" class="form-label">Select up to 8 images of the business (Food, aesthetic, drinks, etc)</label>
       <input type="file" class="form-control" id="photos" (change)="onPhotosSelected($event)" name="photos" multiple>
+      <div *ngIf="fetchedPhotos.length">
+        <p>Or select from the photos we found:</p>
+        <div class="row">
+          <div *ngFor="let photo of fetchedPhotos" class="col-3 mb-2">
+            <img [src]="photo.url" alt="Business photo" class="img-thumbnail" (click)="addFetchedPhoto(photo.url)">
+          </div>
+        </div>
+      </div>
     </div>
     <div *ngIf="currentStep >= 9" class="mb-3">
       <label for="primaryColor" class="form-label">Main Color of the Website</label>

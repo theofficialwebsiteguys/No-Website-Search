@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { GoogleMapsService } from '../google-maps.service';
 
 @Component({
   selector: 'app-business-details',
@@ -17,7 +18,7 @@ export class BusinessDetailsComponent implements OnInit {
     address: '',
     logo: '',
     hero_image: '',
-    hero_title: '',
+    hero_title: 'Welcome to ',
     banner: '',
     photos: [],
     colors: {
@@ -27,8 +28,9 @@ export class BusinessDetailsComponent implements OnInit {
   };
   currentStep = 1;
   searchResults: any[] = [];
+  fetchedPhotos: any[] = []; // To store fetched photos
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private googleMapsService: GoogleMapsService) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state?.['business']) {
       this.business = navigation.extras.state['business'];
@@ -44,9 +46,20 @@ export class BusinessDetailsComponent implements OnInit {
   ngOnInit(): void {}
 
   initializeStep(): void {
-    if (this.business.name) this.currentStep = 2;
+    if (this.business.name) {
+      this.currentStep = 2;
+      this.fetchPhotos(); // Fetch photos when business name is set
+    }
     if (this.business.phone) this.currentStep = 3;
     if (this.business.address) this.currentStep = 4;
+  }
+
+  fetchPhotos(): void {
+    if (this.business.name) {
+      this.googleMapsService.searchPhotos(this.business.name).subscribe(photos => {
+        this.fetchedPhotos = photos;
+      });
+    }
   }
 
   onLogoSelected(event: any): void {
@@ -84,6 +97,12 @@ export class BusinessDetailsComponent implements OnInit {
       reader.readAsDataURL(files[i]);
     }
     this.nextStep(9);
+  }
+
+  addFetchedPhoto(photoUrl: string): void {
+    if (this.business.photos.length < 8) {
+      this.business.photos.push(photoUrl);
+    }
   }
 
   nextStep(step: number): void {
