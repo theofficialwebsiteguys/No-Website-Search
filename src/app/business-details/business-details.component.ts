@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GoogleMapsService } from '../google-maps.service';
+import { BusinessService } from '../business.service';
 
 @Component({
   selector: 'app-business-details',
@@ -12,46 +13,34 @@ import { GoogleMapsService } from '../google-maps.service';
   styleUrls: ['./business-details.component.scss']
 })
 export class BusinessDetailsComponent implements OnInit {
-  business: any = {
-    name: '',
-    phone: '',
-    address: '',
-    logo: '',
-    hero_image: '',
-    hero_title: 'Welcome to ',
-    banner: '',
-    photos: [],
-    colors: {
-      primary: '#000000', // default color
-      secondary: '#ffffff' // default color
-    }
-  };
+  business: any;
   currentStep = 1;
   searchResults: any[] = [];
   fetchedPhotos: any[] = []; // To store fetched photos
 
-  constructor(private router: Router, private googleMapsService: GoogleMapsService) {
+  constructor(private router: Router, private googleMapsService: GoogleMapsService, private businessService: BusinessService) {
+    this.business = this.businessService.getBusiness();
     const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras.state?.['business']) {
-      this.business = navigation.extras.state['business'];
-      this.searchResults = navigation.extras.state['searchResults'] || [];
-      // Ensure colors are initialized if not present
-      this.business.colors = this.business.colors || { primary: '#000000', secondary: '#ffffff' };
+    if (navigation?.extras.state?.['searchResults']) {
+      this.searchResults = navigation.extras.state['searchResults'];
     }
 
-    // Initialize currentStep based on pre-filled data
-    this.initializeStep();
+    // Restore the last saved step
+    this.restoreLastStep();
   }
 
   ngOnInit(): void {}
 
-  initializeStep(): void {
+  restoreLastStep(): void {
     if (this.business.name) {
       this.currentStep = 2;
       this.fetchPhotos(); // Fetch photos when business name is set
     }
     if (this.business.phone) this.currentStep = 3;
     if (this.business.address) this.currentStep = 4;
+    if (this.business.logo) this.currentStep = 5;
+    if (this.business.hero_image) this.currentStep = 6;
+    if (this.business.photos.length > 0) this.currentStep = 9;
   }
 
   fetchPhotos(): void {
@@ -68,6 +57,7 @@ export class BusinessDetailsComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.business.logo = e.target.result; // This will be a base64 string
+        this.businessService.updateBusiness({ logo: this.business.logo });
         this.nextStep(5);
       };
       reader.readAsDataURL(file);
@@ -80,6 +70,7 @@ export class BusinessDetailsComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.business.hero_image = e.target.result; // This will be a base64 string
+        this.businessService.updateBusiness({ hero_image: this.business.hero_image });
         this.nextStep(6);
       };
       reader.readAsDataURL(file);
@@ -93,6 +84,7 @@ export class BusinessDetailsComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.business.photos.push(e.target.result); // Add each photo as a base64 string
+        this.businessService.updateBusiness({ photos: this.business.photos });
       };
       reader.readAsDataURL(files[i]);
     }
@@ -102,6 +94,7 @@ export class BusinessDetailsComponent implements OnInit {
   addFetchedPhoto(photoUrl: string): void {
     if (this.business.photos.length < 8) {
       this.business.photos.push(photoUrl);
+      this.businessService.updateBusiness({ photos: this.business.photos });
     }
   }
 
@@ -114,7 +107,8 @@ export class BusinessDetailsComponent implements OnInit {
   }
 
   submitDetails(): void {
-    this.router.navigate(['/business-profile'], { state: { business: this.business } });
+    this.businessService.updateBusiness(this.business);
+    this.router.navigate(['/business-profile']);
   }
 
   goBack(): void {

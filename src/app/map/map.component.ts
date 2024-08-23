@@ -6,11 +6,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router, NavigationExtras } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
-export interface SearchResult {
-  query: string;
-  places: any[];
-}
+import { BusinessService } from '../business.service';
 
 @Component({
   selector: 'app-map',
@@ -37,12 +33,13 @@ export class MapComponent implements OnInit, AfterViewInit {
   error_search: string = '';
   emailMode: boolean = false; // Toggle for email mode
 
-  constructor(private googleMapsService: GoogleMapsService, private router: Router) {
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras.state?.['searchResults']) {
-      this.searchResults = navigation.extras.state['searchResults'];
-      this.noResultsFound = this.searchResults.length === 0;
-    }
+  constructor(
+    private googleMapsService: GoogleMapsService,
+    private router: Router,
+    private businessService: BusinessService
+  ) {
+    // Load any pre-existing search results from the service
+    this.searchResults = this.businessService.getSearchResults();
   }
 
   ngOnInit(): void {}
@@ -103,10 +100,12 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   onRadiusChanged(newRadius: number): void {
     this.radius = newRadius;
+    this.updateCircle();
   }
 
   onCenterChanged(newCenter: { lat: number, lng: number }): void {
     this.center = newCenter;
+    this.updateCircle();
   }
 
   toggleSearchMode(): void {
@@ -160,6 +159,8 @@ export class MapComponent implements OnInit, AfterViewInit {
       .subscribe(
         results => {
           this.searchResults = results.flat();
+          this.businessService.updateSearchResults(this.searchResults); // Save the results in the service
+          this.noResultsFound = false;
           // Sort results to move those without websites to the top
           this.searchResults.sort((a, b) => a.hasWebsite === b.hasWebsite ? 0 : a.hasWebsite ? 1 : -1);
           if (this.searchResults.length === 0) {
@@ -175,6 +176,7 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   removePlace(placeIndex: number): void {
     this.searchResults.splice(placeIndex, 1);
+    this.businessService.updateSearchResults(this.searchResults); // Update the service
   }
 
   updateCircle(): void {
@@ -198,13 +200,13 @@ export class MapComponent implements OnInit, AfterViewInit {
   clearResults(): void {
     this.searchResults = [];
     this.noResultsFound = false;
+    this.businessService.updateSearchResults(this.searchResults); // Clear the results in the service
   }
 
   selectBusiness(place: any): void {
-    console.log(place);
+    this.businessService.updateBusiness(place); // Save the selected business
     const navigationExtras: NavigationExtras = {
       state: {
-        business: place,
         searchResults: this.searchResults
       }
     };

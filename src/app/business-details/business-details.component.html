@@ -20,38 +20,32 @@
       <label for="logo" class="form-label">Logo</label>
       <input type="file" class="form-control" id="logo" (change)="onLogoSelected($event)" name="logo">
     </div>
-    <div *ngIf="currentStep >= 5" class="mb-3">
-      <label for="hero" class="form-label">What image represents {{ business.name }} best? (Landscape image)</label>
+    <div *ngIf="currentStep >= 4" class="mb-3">
+      <label for="hero" class="form-label">Hero Image</label>
       <input type="file" class="form-control" id="hero" (change)="onHeroSelected($event)" name="hero">
     </div>
-    <div *ngIf="currentStep >= 6" class="mb-3">
-      <label for="heroTitle" class="form-label">When you click {{ business.name }} website, what is the first thing YOU want to read?</label>
-      <input type="text" class="form-control" id="heroTitle" [(ngModel)]="business.hero_title" name="heroTitle" (input)="nextStep(7)">
-    </div>
-    <div *ngIf="currentStep >= 7" class="mb-3">
-      <label for="bannerText" class="form-label">What would the owner of {{ business.name }} want to say to their customers? </label>
-      <input type="text" class="form-control" id="bannerText" [(ngModel)]="business.banner" name="bannerText" (input)="nextStep(8)">
-    </div>
-    <div *ngIf="currentStep >= 8" class="mb-3">
+    <div *ngIf="currentStep >= 4" class="mb-3">
       <label for="photos" class="form-label">Select up to 8 images of the business (Food, aesthetic, drinks, etc)</label>
       <input type="file" class="form-control" id="photos" (change)="onPhotosSelected($event)" name="photos" multiple>
-      <div *ngIf="fetchedPhotos.length">
-        <p>Or select from the photos we found:</p>
-        <div class="row">
-          <div *ngFor="let photo of fetchedPhotos" class="col-3 mb-2">
-            <img [src]="photo.url" alt="Business photo" class="img-thumbnail" (click)="addFetchedPhoto(photo.url)">
-          </div>
-        </div>
-      </div>
     </div>
-    <div *ngIf="currentStep >= 9" class="mb-3">
+    <div *ngIf="currentStep >= 4" class="mb-3">
+      <label for="bannerText" class="form-label">Choose a caption: </label>
+      <select class="form-control" id="bannerText" [(ngModel)]="business.banner" name="bannerText" (input)="nextStep(8)">
+        <option value="" disabled selected>Select business type</option>
+        <option value="Family Owned!">Family Owned!</option>
+        <option value="High Quality Ingredients!">High Quality Ingredients!</option>
+        <option value="Locally Owned and Operated!">Locally Owned and Operated!</option>
+        <option value="Quality, Timely Service!">Quality, Timely Service!</option>
+      </select>
+    </div>   
+    <div *ngIf="currentStep >= 4" class="mb-3">
       <label for="primaryColor" class="form-label">Main Color of the Website</label>
-      <input type="color" class="form-control" id="primaryColor" [(ngModel)]="business.colors.primary" name="primaryColor" (change)="nextStep(10)">
+      <input type="color" class="form-control" id="primaryColor" [(ngModel)]="business.colors.primary" name="primaryColor" (change)="nextStep(9)">
     </div>
-    <div *ngIf="currentStep >= 9" class="mb-3">
+    <div *ngIf="currentStep >= 4" class="mb-3">
       <label for="secondaryColor" class="form-label">Secondary Color</label>
-      <input type="color" class="form-control" id="secondaryColor" [(ngModel)]="business.colors.secondary" name="secondaryColor" (change)="nextStep(11)">
+      <input type="color" class="form-control" id="secondaryColor" [(ngModel)]="business.colors.secondary" name="secondaryColor" (change)="nextStep(10)">
     </div>
-    <button *ngIf="currentStep >= 9" type="submit" class="btn btn-primary">Generate Template</button>
+    <button *ngIf="currentStep >= 4" type="submit" class="btn btn-primary">Generate Template</button>
   </form>
 </div>

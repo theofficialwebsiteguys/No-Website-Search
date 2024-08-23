@@ -1,3 +1,7 @@
+<button (click)="goBack()" class="back-button">
+  Back to Business Details
+</button>
+
 <app-business-profile-header [business]="business"></app-business-profile-header>
 
 
@@ -23,18 +27,10 @@
   
   <div class="banner2" [ngStyle]="{'background-color': business.colors.secondary}">
     <div class="banner-sections2">
-      <h2 class="banner-title">{{ business.banner }}</h2>
+      <h2 class="banner-title">{{business.banner}}</h2>
     </div>
   </div>
   
-  <!-- <div class="reviews-section" [ngStyle]="{'background-image': 'url(' + business.hero_image + ')'}">
-    <h2 class="reviews-title">See What Our Customers Have To Say!</h2>
-    <div class="review" *ngFor="let review of business.reviews">
-      <h3 class="review-author">{{ review.author }} <span class="stars">{{ review.rating }}</span></h3>
-      <p class="review-text">{{ review.text }}</p>
-    </div>
-  </div> -->
-
  <app-business-profile-reviews [business]="business"></app-business-profile-reviews>
   
   <div class="footer-container">
