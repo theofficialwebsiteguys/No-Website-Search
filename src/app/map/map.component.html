@@ -1,58 +1,81 @@
-<div class="container mt-4">
-  <div id="map" class="rounded shadow-sm mb-4" style="height: 500px; width: 100%;"></div>
-
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <button type="button" class="btn btn-primary me-2" (click)="search()">Search</button>
-      <button type="button" class="btn btn-danger me-2" (click)="clearResults()">Clear Results</button>
-      <button type="button" class="btn btn-secondary me-2" (click)="setCurrentLocation()">Use Current Location</button>
+<div class="container-fluid px-4 py-4">
+  <div class="row g-4">
+    <!-- Left Panel: Map -->
+    <div class="col-lg-7">
+      <div class="card shadow border-0 h-100">
+        <div class="card-body p-0">
+          <div id="map" class="rounded" style="height: 500px; width: 100%;"></div>
+        </div>
+      </div>
     </div>
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="modeToggle" (change)="toggleSearchMode()" [checked]="emailMode">
-      <label class="form-check-label" for="modeToggle">{{ emailMode ? 'Email Mode' : 'Default Mode' }}</label>
+
+    <!-- Right Panel: Controls -->
+    <div class="col-lg-5">
+      <div class="card shadow border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title mb-4">Business Search</h5>
+
+          <div class="mb-3">
+            <label for="addressInput" class="form-label">Search by Address or Zip</label>
+            <div class="input-group">
+              <input type="text" id="addressInput" class="form-control" [(ngModel)]="query" placeholder="e.g. 90210, Brooklyn, NY" />
+              <button class="btn btn-success" (click)="searchByAddress()">Go</button>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2 mb-3">
+            <button class="btn btn-primary" (click)="search()">Search Nearby</button>
+            <button class="btn btn-secondary" (click)="setCurrentLocation()">Use Current Location</button>
+            <button class="btn btn-outline-danger" (click)="clearResults()">Clear Results</button>
+          </div>
+
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="modeToggle" (change)="toggleSearchMode()" [checked]="emailMode" />
+            <label class="form-check-label" for="modeToggle">
+              {{ emailMode ? 'Email Mode' : 'Default Mode' }}
+            </label>
+          </div>
+
+          <div *ngIf="noResultsFound" class="alert alert-warning mt-3">
+            No results found for <strong>{{ error_search }}</strong>. Try another location.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div *ngIf="noResultsFound" class="alert alert-warning" role="alert">
-    No results found for "{{ error_search }}". Please try a different search.
+  <!-- Results -->
+  <div class="card shadow border-0 mt-5" *ngIf="searchResults.length > 0">
+    <div class="card-body">
+      <h4 class="mb-4">Search Results ({{ searchResults.length }})</h4>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Website</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let place of searchResults; let placeIndex = index" [ngClass]="{'no-website': !place.hasWebsite}">
+              <td>{{ place.name }}</td>
+              <td>{{ place.phone || 'N/A' }}</td>
+              <td>
+                <span *ngIf="place.hasWebsite; else noWebsiteLabel">Has Website</span>
+                <ng-template #noWebsiteLabel><span class="text-muted">No Website</span></ng-template>
+              </td>
+              <td>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-info" (click)="searchOnGoogle(place.name)">Google</button>
+                  <button class="btn btn-sm btn-outline-primary" (click)="selectBusiness(place)">Website Generator</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-
-  <div *ngIf="searchResults.length > 0" class="search-results">
-    <h3 class="mb-3">Search Results</h3>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Phone</th>
-          <th>Website</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let place of searchResults; let placeIndex = index">
-          <td [ngClass]="{'no-website': !place.hasWebsite}">{{ place.name }}</td>
-          <td [ngClass]="{'no-website': !place.hasWebsite}">{{ place.phone }}</td>
-          <td [ngClass]="{'no-website': !place.hasWebsite}">
-            <span *ngIf="place.hasWebsite; else noWebsiteLabel">Has Website</span>
-            <ng-template #noWebsiteLabel>No Website</ng-template>
-          </td>
-          <td [ngClass]="{'no-website': !place.hasWebsite}">
-            <button type="button" class="btn btn-info" (click)="searchOnGoogle(place.name)">Search</button>
-            <button type="button" class="btn btn-primary" (click)="selectBusiness(place)">Website Generator</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- <div class="controls">
-    <label for="radiusRange">Radius: {{ radius }} meters</label>
-    <input type="range" id="radiusRange" min="500" max="10000" step="500" [(ngModel)]="radius" (input)="updateCircle()">
-    
-    <label for="latitudeInput">Latitude:</label>
-    <input type="number" id="latitudeInput" [(ngModel)]="center.lat" (input)="updateCircle()">
-    
-    <label for="longitudeInput">Longitude:</label>
-    <input type="number" id="longitudeInput" [(ngModel)]="center.lng" (input)="updateCircle()">
-  </div> -->
 </div>

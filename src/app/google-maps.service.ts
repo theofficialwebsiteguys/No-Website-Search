@@ -19,6 +19,11 @@ export class GoogleMapsService {
     );
   }
 
+  geocodeAddress(address: string): Observable<{ lat: number, lng: number }> {
+    const url = `${this.serverUrl}/geocode-address?address=${encodeURIComponent(address)}`;
+    return this.http.get<{ lat: number, lng: number }>(url);
+  }
+
   getPlaceDetails(placeId: string): Observable<any> {
     const url = `${this.serverUrl}/place-details?placeId=${placeId}`;
     return this.http.get<any>(url).pipe(

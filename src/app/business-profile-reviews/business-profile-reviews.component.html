@@ -1,15 +1,15 @@
-<div class="reviews-section"  [ngStyle]="{'background-image': 'url(' + business.hero_image + ')'}">
-    <h2 class="reviews-title">See What Our Customers Have To Say!</h2>
-    <div class="review">
-      <h3 class="review-author">Emily <span class="stars">★★★★★</span></h3>
-      <p class="review-text">Would give Fiesta Bowl more than 5 stars if possible! This is such a fun Mexican restaurant!!! Drinks are awesome - trying the margarita flight at least once is a must!!! Chips and salsa are good and the guacamole is also really good. All of the food I've tried has been delicious too. I always have so much fun coming here and it is a really fun environment.</p>
-    </div>
-    <div class="review">
-      <h3 class="review-author">John <span class="stars">★★★★☆</span></h3>
-      <p class="review-text">Great place for Mexican food. The atmosphere is vibrant and the staff is friendly. The food is consistently good and the drinks are excellent. Definitely a place to visit again and again.</p>
-    </div>
-    <div class="review">
-      <h3 class="review-author">Sarah <span class="stars">★★★★★</span></h3>
-      <p class="review-text">Amazing food and great service! The margaritas are top-notch, and the tacos are the best I've ever had. Highly recommend this place for a fun night out.</p>
+<div class="reviews-section" [ngStyle]="{'background-image': 'url(' + (business.hero_image || fallbackHeroImage) + ')'}">
+  <div class="overlay"></div>
+  <div class="reviews-container">
+    <h2 class="reviews-title">What Our Customers Are Saying</h2>
+
+    <div class="row justify-content-center g-4">
+      <div class="col-md-6 col-lg-4" *ngFor="let review of reviews">
+        <div class="review-card">
+          <h5 class="review-author">{{ review.author }} <span class="stars">{{ review.stars }}</span></h5>
+          <p class="review-text">{{ review.text }}</p>
+        </div>
+      </div>
     </div>
   </div>
+</div>

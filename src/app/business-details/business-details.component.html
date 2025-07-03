@@ -1,51 +1,129 @@
-<div class="container mt-4">
-  <div class="mt-3">
-    <button type="button" class="btn btn-secondary" (click)="goBack()">Back to Search</button>
+<div class="container-fluid px-4 py-4">
+  <div class="mb-3">
+    <button type="button" class="btn btn-outline-secondary" (click)="goBack()">
+      ← Back to Search
+    </button>
   </div>
-  <h2>Website Generator</h2>
-  <form (ngSubmit)="submitDetails()">
-    <div *ngIf="currentStep >= 1" class="mb-3">
-      <label for="businessName" class="form-label">Business Name</label>
-      <input type="text" class="form-control" id="businessName" [(ngModel)]="business.name" name="businessName" (input)="nextStep(2)">
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <h3 class="card-title mb-4">Website Generator</h3>
+
+      <form (ngSubmit)="submitDetails()">
+        <div class="row g-3">
+          <!-- Step 1: Business Name -->
+          <div *ngIf="currentStep >= 1" class="col-12">
+            <label for="businessName" class="form-label">Business Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="businessName"
+              [(ngModel)]="business.name"
+              name="businessName"
+              placeholder="e.g. Blue Line Auto Glass"
+              (input)="nextStep(2)"
+            />
+          </div>
+
+          <!-- Step 2: Phone -->
+          <div *ngIf="currentStep >= 2" class="col-md-6">
+            <label for="businessPhone" class="form-label">Phone Number</label>
+            <input
+              type="text"
+              class="form-control"
+              id="businessPhone"
+              [(ngModel)]="business.phone"
+              name="businessPhone"
+              placeholder="e.g. (555) 123-4567"
+              (input)="nextStep(3)"
+            />
+          </div>
+
+          <!-- Step 3: Address -->
+          <div *ngIf="currentStep >= 3" class="col-md-6">
+            <label for="businessAddress" class="form-label">Address</label>
+            <input
+              type="text"
+              class="form-control"
+              id="businessAddress"
+              [(ngModel)]="business.address"
+              name="businessAddress"
+              placeholder="e.g. 123 Main St, NY"
+              (input)="nextStep(4)"
+            />
+          </div>
+
+          <!-- Step 4: Media Uploads -->
+          <div *ngIf="currentStep >= 4" class="col-md-6">
+            <label for="logo" class="form-label">Upload Logo</label>
+            <input type="file" class="form-control" id="logo" (change)="onLogoSelected($event)" />
+          </div>
+          <div *ngIf="currentStep >= 4" class="col-md-6">
+            <label for="hero" class="form-label">Upload Hero Image</label>
+            <input type="file" class="form-control" id="hero" (change)="onHeroSelected($event)" />
+          </div>
+
+          <div *ngIf="currentStep >= 4" class="col-12">
+            <label for="photos" class="form-label">Upload up to 8 Gallery Photos</label>
+            <input type="file" class="form-control" id="photos" (change)="onPhotosSelected($event)" multiple />
+          </div>
+
+          <div *ngIf="business.photos?.length" class="col-12">
+            <div class="row g-2 mt-2">
+              <div class="col-6 col-md-3" *ngFor="let img of business.photos">
+                <img [src]="img" class="img-fluid rounded border" style="object-fit: cover; height: 120px; width: 100%;" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Caption and Colors -->
+          <div *ngIf="currentStep >= 4" class="col-md-6">
+            <label for="bannerText" class="form-label">Tagline</label>
+            <select
+              class="form-select"
+              id="bannerText"
+              [(ngModel)]="business.banner"
+              name="bannerText"
+              (input)="nextStep(8)"
+            >
+              <option disabled selected value="">Select a tagline</option>
+              <option value="Family Owned!">Family Owned!</option>
+              <option value="High Quality Ingredients!">High Quality Ingredients!</option>
+              <option value="Locally Owned and Operated!">Locally Owned and Operated!</option>
+              <option value="Quality, Timely Service!">Quality, Timely Service!</option>
+            </select>
+          </div>
+
+          <div *ngIf="currentStep >= 4" class="col-md-3">
+            <label for="primaryColor" class="form-label">Primary Color</label>
+            <input
+              type="color"
+              class="form-control form-control-color"
+              id="primaryColor"
+              [(ngModel)]="business.colors.primary"
+              name="primaryColor"
+              (change)="nextStep(9)"
+            />
+          </div>
+
+          <div *ngIf="currentStep >= 4" class="col-md-3">
+            <label for="secondaryColor" class="form-label">Secondary Color</label>
+            <input
+              type="color"
+              class="form-control form-control-color"
+              id="secondaryColor"
+              [(ngModel)]="business.colors.secondary"
+              name="secondaryColor"
+              (change)="nextStep(10)"
+            />
+          </div>
+
+          <!-- Submit -->
+          <div class="col-12 mt-4" *ngIf="currentStep >= 4">
+            <button type="submit" class="btn btn-primary w-100">Generate Website Template</button>
+          </div>
+        </div>
+      </form>
     </div>
-    <div *ngIf="currentStep >= 2" class="mb-3">
-      <label for="businessPhone" class="form-label">Phone Number</label>
-      <input type="text" class="form-control" id="businessPhone" [(ngModel)]="business.phone" name="businessPhone" (input)="nextStep(3)">
-    </div>
-    <div *ngIf="currentStep >= 3" class="mb-3">
-      <label for="businessAddress" class="form-label">Address</label>
-      <input type="text" class="form-control" id="businessAddress" [(ngModel)]="business.address" name="businessAddress" (input)="nextStep(4)">
-    </div>
-    <div *ngIf="currentStep >= 4" class="mb-3">
-      <label for="logo" class="form-label">Logo</label>
-      <input type="file" class="form-control" id="logo" (change)="onLogoSelected($event)" name="logo">
-    </div>
-    <div *ngIf="currentStep >= 4" class="mb-3">
-      <label for="hero" class="form-label">Hero Image</label>
-      <input type="file" class="form-control" id="hero" (change)="onHeroSelected($event)" name="hero">
-    </div>
-    <div *ngIf="currentStep >= 4" class="mb-3">
-      <label for="photos" class="form-label">Select up to 8 images of the business (Food, aesthetic, drinks, etc)</label>
-      <input type="file" class="form-control" id="photos" (change)="onPhotosSelected($event)" name="photos" multiple>
-    </div>
-    <div *ngIf="currentStep >= 4" class="mb-3">
-      <label for="bannerText" class="form-label">Choose a caption: </label>
-      <select class="form-control" id="bannerText" [(ngModel)]="business.banner" name="bannerText" (input)="nextStep(8)">
-        <option value="" disabled selected>Select business type</option>
-        <option value="Family Owned!">Family Owned!</option>
-        <option value="High Quality Ingredients!">High Quality Ingredients!</option>
-        <option value="Locally Owned and Operated!">Locally Owned and Operated!</option>
-        <option value="Quality, Timely Service!">Quality, Timely Service!</option>
-      </select>
-    </div>   
-    <div *ngIf="currentStep >= 4" class="mb-3">
-      <label for="primaryColor" class="form-label">Main Color of the Website</label>
-      <input type="color" class="form-control" id="primaryColor" [(ngModel)]="business.colors.primary" name="primaryColor" (change)="nextStep(9)">
-    </div>
-    <div *ngIf="currentStep >= 4" class="mb-3">
-      <label for="secondaryColor" class="form-label">Secondary Color</label>
-      <input type="color" class="form-control" id="secondaryColor" [(ngModel)]="business.colors.secondary" name="secondaryColor" (change)="nextStep(10)">
-    </div>
-    <button *ngIf="currentStep >= 4" type="submit" class="btn btn-primary">Generate Template</button>
-  </form>
+  </div>
 </div>

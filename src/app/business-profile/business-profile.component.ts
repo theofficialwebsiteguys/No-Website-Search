@@ -48,6 +48,7 @@ export class BusinessProfileComponent {
 
   @ViewChild('navbar') navbar!: ElementRef;
   @ViewChild('searchInput') searchInput!: ElementRef;
+  
 
   searchBarVisible = false;
   mobileMenuActive = false;

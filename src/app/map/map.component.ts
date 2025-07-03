@@ -174,6 +174,29 @@ export class MapComponent implements OnInit, AfterViewInit {
       );
   }
 
+  searchByAddress(): void {
+    if (!this.query) {
+      alert("Please enter an address.");
+      return;
+    }
+
+    this.googleMapsService.geocodeAddress(this.query).subscribe(
+      location => {
+        this.center = { lat: location.lat, lng: location.lng };
+        this.updateCircle();
+        this.map.setCenter(this.center);
+        this.search(); // Triggers the same place search by lat/lng/radius
+      },
+      err => {
+        console.error("Geocode failed", err);
+        this.noResultsFound = true;
+        this.error_search = this.query;
+      }
+    );
+  }
+
+
+
   removePlace(placeIndex: number): void {
     this.searchResults.splice(placeIndex, 1);
     this.businessService.updateSearchResults(this.searchResults); // Update the service
